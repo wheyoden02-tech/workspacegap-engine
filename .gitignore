@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.env*
+!.env.example
+.vercel/
+.clasprc.json
+.clasp.json
+playwright-report/
+test-results/

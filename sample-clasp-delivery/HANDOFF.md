@@ -1,0 +1,19 @@
+# Client handoff — GreenScape Landscaping LLC
+
+**Owner:** your designated office lead. **Tracker:** GreenScape Quote Pipeline. **Edition:** Business Standard. Your data and execution stay inside your domain. No new SaaS subscription is required; existing Workspace, setup, and maintenance still have costs.
+
+## Install and configure
+1. The office lead owns the Google Sheet. From that Sheet, open Extensions → Apps Script to create a bound project. Use your own domain account and OAuth consent; never share a password.
+2. To use clasp: run `clasp login` on your own machine, then `clasp clone <bound-script-id>` in a separate empty directory. Copy Code.gs and appsscript.json from this bundle into that checkout, review the diff, and run `clasp push`. Keep CLAUDE.md and HANDOFF.md as local documentation. Never commit .clasprc.json.
+3. In Apps Script Project Settings, set Script Properties: `GREENSCAPE_SHEET_ID` = the bound spreadsheet ID; `GREENSCAPE_INTAKE_LABEL` = your Gmail intake label (letters, digits, spaces, slash, underscore, hyphen); `GREENSCAPE_OFFICE_LEAD` = the responsible person's name. These are configuration, not credentials.
+4. Gmail Advanced Service v1 is enabled by the manifest. For a standard Cloud project also enable the Gmail API in its Cloud console. Review and grant the five manifest scopes under your domain policy. No broad mail scope, send scope, or external HTTP scope is included. Read-only Gmail access is mailbox-wide, not confined by OAuth to one label. gmail.compose also allows sending; the reviewed code calls Drafts.create only.
+5. Create the intake label and a narrowly matching Gmail filter for your website form. Route only trusted form notifications there. The plain-text email body must be a JSON object: `{"customer":"Alex","contact":"alex@example.com","request":"Quote details","due_on":"2026-11-20"}`. Human prose, HTML-only mail, and malformed JSON are quarantined.
+6. Set the correct IANA time zone in appsscript.json (default Etc/UTC). Run runMorningTrigger manually against test requests, then repeat it: no extra rows or drafts should appear. Review Quarantine. Run installMorningTrigger as the office lead after acceptance. It creates one daily trigger around 08:00 (Google time triggers are approximate), and protects header/ID ranges. Owner and executing account retain access.
+
+## Weekly ownership
+**Monday:** check Apps Script Executions for errors, quota warnings, and runtime. Paid Workspace reference: 6 minutes/execution, 6 hours trigger runtime/day, 50,000 email read/write operations/day; trials and Google changes can reduce limits. The workbench counters are simulated, not live quota telemetry.
+**Wednesday:** office lead reviews every draft in Gmail, edits it, and chooses whether to send manually. Nothing in this package sends. If a row says REVIEW_REQUIRED or remains DRAFT_PENDING, check Gmail for its quote ID before manually reconciling; do not delete its reservation and blindly rerun. Correct quarantined payloads and create a new intake message after review.
+**Friday:** record observed copy-pastes avoided per job (baseline minus current), failures/quota warnings, drafts created vs. actually sent, and a short status note. Do not treat estimated tool overlap as verified savings. E-signature and dispatch/payment suites need separate suitability review.
+
+## Transfer and remove access
+Client owns the Sheet, script, Cloud project (if used), and intake mailbox. Recreate time triggers as the client's office lead; installable triggers do not transfer with file ownership. Verify the client-run trigger, then have the previous creator delete their triggers and revoke their OAuth grant. Remove vendor editors, deployment access, and temporary admin roles. Stop automation by deleting the trigger; preserve the Sheet, Quarantine, and drafts for review.
